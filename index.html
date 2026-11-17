@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة متابعة المشاريع — المنطقة الغربية</title>
+<style>
+:root{
+  --bg:#F3F5F9;--card:#FFFFFF;--card2:#F5F7FB;--line:#DCE2EC;--soft:#EEF2F8;
+  --txt:#14213D;--mut:#6B7280;--teal:#1F7A8C;--blue:#1F4E8C;--amber:#B8860B;--purple:#6D4C9F;
+  --green:#2E8B6E;--pink:#B83B7E;--red:#C0392B;--orange:#D2691E;--navy:#14213D;
+}
+*{box-sizing:border-box}
+svg{direction:ltr}
+*{scrollbar-width:thin;scrollbar-color:#C5CEDB transparent}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#C5CEDB;border-radius:6px}::-webkit-scrollbar-button{display:none;height:0;width:0}
+body{margin:0;background:radial-gradient(1200px 600px at 85% -10%,#F3F5F9 0%,transparent 60%),var(--bg);font-family:"Segoe UI",Tahoma,Arial,sans-serif;color:var(--txt);font-size:14px;min-height:100vh}
+.wrap{max-width:1480px;margin:0 auto;padding:18px}
+header.top{background:linear-gradient(100deg,#14213D 0%,#1F2F57 50%,#2A3F6E 100%);color:#fff;border-radius:16px;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;box-shadow:0 10px 30px rgba(45,212,191,.12)}
+header.top h1{margin:0;font-size:24px;font-weight:700}
+header.top .sub{opacity:.85;font-size:12.5px;margin-top:5px}
+.today{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);padding:8px 14px;border-radius:999px;font-size:12.5px}
+.layout{display:grid;grid-template-columns:1fr;gap:16px;margin-top:16px}
+.card{background:var(--card);border-radius:16px;border:1px solid var(--line);padding:14px;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+.card h3{margin:0 0 10px;font-size:15px;color:var(--txt);display:flex;align-items:center;gap:8px}
+.card h3:before{content:"";width:10px;height:10px;border-radius:3px;background:var(--teal);box-shadow:0 0 10px var(--teal)}
+.slicer{display:flex;flex-direction:column;gap:6px;max-height:420px;overflow:auto;padding-left:2px}
+.slicer::-webkit-scrollbar,.tw::-webkit-scrollbar{width:6px;height:6px}.slicer::-webkit-scrollbar-thumb,.tw::-webkit-scrollbar-thumb{background:#C5CEDB;border-radius:6px}
+.chip{border:1px solid var(--line);background:var(--card2);color:var(--txt);padding:7px 12px;border-radius:999px;cursor:pointer;text-align:right;font:inherit;font-size:13px;transition:.15s;display:flex;justify-content:space-between;align-items:center;gap:6px}
+.chip:hover{border-color:var(--teal)}
+.chip.on{background:rgba(45,212,191,.14);color:var(--teal);border-color:var(--teal);box-shadow:0 0 12px rgba(45,212,191,.25)}
+.chip.dim{opacity:.35}
+.chip small{font-size:11px;opacity:.7}
+.fbar{margin-top:16px;padding:12px 16px}
+.frow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.flab{color:var(--mut);font-size:13px;white-space:nowrap}
+.vsep{width:1px;height:26px;background:var(--line);margin:0 6px}
+.dd{appearance:none;-webkit-appearance:none;background:var(--card2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238B9AB8' stroke-width='2' fill='none'/%3E%3C/svg%3E") no-repeat left 12px center;color:var(--txt);border:1px solid var(--line);border-radius:10px;padding:8px 14px 8px 34px;font:inherit;font-size:13.5px;min-width:190px;cursor:pointer;transition:.15s}
+.dd:hover,.dd:focus{border-color:var(--teal);outline:none;box-shadow:0 0 10px rgba(45,212,191,.2)}
+.dd.wide{min-width:300px}
+.dd.act{border-color:var(--teal);color:var(--teal)}
+.dd option{background:#FFFFFF;color:#14213D}
+.frow .hint{margin:0}
+.frow .clr{margin-right:auto}
+.slhead{display:flex;justify-content:space-between;align-items:center}
+.clr{border:1px solid rgba(248,113,113,.5);background:none;color:var(--red);cursor:pointer;font:inherit;font-size:11.5px;border-radius:999px;padding:3px 10px}
+.search{width:100%;padding:8px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;font:inherit;font-size:13px;background:var(--card2);color:var(--txt)}
+.search::placeholder{color:var(--mut)}
+.hint{font-size:11.5px;color:var(--mut);margin-top:8px;line-height:1.6}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.kpi{position:relative;background:var(--card);border:1px solid var(--line);border-top:3px solid var(--c);border-radius:14px;overflow:hidden;padding:12px 12px 10px}
+.kpi:after{content:"";position:absolute;width:90px;height:90px;border-radius:50%;background:var(--c);opacity:.07;left:-25px;bottom:-35px}
+.kpi:first-child{box-shadow:0 0 0 1px var(--c),0 0 22px rgba(45,212,191,.18)}
+.kpi .h{color:var(--mut);font-size:12.5px}
+.kpi .v{white-space:nowrap;font-size:21px;font-weight:700;color:var(--c);padding:8px 0 4px;direction:ltr;text-align:right}
+.kpi .s{font-size:11.5px;color:var(--mut)}
+.kpi.warn{--c:var(--red)!important}
+.row2{display:grid;grid-template-columns:0.95fr 1fr 1.4fr;gap:16px;margin-top:16px}
+.durbox{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:12px}
+.durbox div{padding:9px;text-align:center}
+.durbox div:first-child{background:var(--soft);font-weight:600;color:var(--mut)}
+.dates{display:flex;justify-content:space-between;font-size:12.5px;color:var(--mut);margin-bottom:6px}
+.dates b{color:var(--txt);font-size:13.5px;display:block}
+.track{position:relative;height:22px;background:#E9EEF5;border-radius:11px;margin:20px 0 8px}
+.track .fill{position:absolute;right:0;top:0;bottom:0;background:linear-gradient(270deg,var(--teal),var(--purple));border-radius:11px;transition:width .5s;box-shadow:0 0 14px rgba(167,139,250,.45)}
+.track .mark{position:absolute;top:-19px;transform:translateX(50%);color:var(--amber);font-size:13px;transition:right .5s}
+.tstats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.tstats>div{border-radius:12px;border:1px solid var(--line);text-align:center;background:var(--card2)}
+.tstats .h{color:var(--mut);font-size:12px;padding:8px 6px 0}
+.tstats .v{font-size:24px;font-weight:700;color:var(--purple);padding:4px 8px 10px;direction:ltr}
+.tstats>div:last-child .v{color:var(--amber)}
+.status{margin-top:10px;padding:8px 12px;border-radius:10px;font-size:12.5px;line-height:1.6;border:1px solid}
+.status.ok{background:rgba(52,211,153,.08);color:var(--green);border-color:rgba(52,211,153,.35)}
+.status.bad{background:rgba(248,113,113,.08);color:var(--red);border-color:rgba(248,113,113,.35)}
+.status.mid{background:rgba(251,191,36,.08);color:var(--amber);border-color:rgba(251,191,36,.35)}
+.gauges{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:16px}
+.gauge{text-align:center;padding:12px 8px}
+.gauge svg{width:100%;max-width:165px;height:auto}
+.gauge .t{font-size:12.5px;color:var(--txt);font-weight:600;margin-top:2px}
+.alloc{display:flex;flex-direction:column;gap:8px}
+.al{border:1px solid var(--line);border-radius:12px;background:var(--card2);padding:8px 12px}
+.al .h{font-size:12px;color:var(--mut)}
+.al .v{font-size:19px;font-weight:700;color:var(--blue);direction:ltr;text-align:right;margin-top:3px}
+.al.sum{border-color:rgba(167,139,250,.5)}.al.sum .v{color:var(--purple)}
+.al.tot{border-color:var(--amber);box-shadow:0 0 16px rgba(251,191,36,.18)}.al.tot .v{color:var(--amber);font-size:22px}
+.bottom{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:16px}
+.bt{border-radius:14px;border:1px solid var(--line);background:var(--card);border-top:3px solid var(--c,var(--green));padding:10px 12px}
+.bt .h{color:var(--mut);font-size:12.5px}
+.bt .v{font-size:21px;font-weight:700;color:var(--c,var(--green));padding:8px 0 2px;direction:ltr;text-align:right}
+.bt.b2{--c:var(--blue)}
+.stars{font-size:17px;letter-spacing:2px;color:var(--amber);text-shadow:0 0 8px rgba(251,191,36,.4)}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{background:#14213D;color:#fff;padding:9px 6px;position:sticky;top:0;z-index:3;box-shadow:0 1px 0 var(--line);cursor:pointer;white-space:nowrap;font-weight:600;border-bottom:1px solid var(--line)}
+.tbl td{padding:8px 6px;border-bottom:1px solid #E3E8F0;text-align:center;white-space:nowrap}
+.tbl td.n{direction:ltr}
+.tbl tr:hover td{background:#EAF0F8;cursor:pointer}
+.tbl tr.sel td{background:rgba(45,212,191,.1)}
+.tw{max-height:430px;overflow:auto;border-radius:12px;border:1px solid var(--line)}
+.pbar{height:6px;background:#E3E8F0;border-radius:4px;min-width:70px;position:relative}
+.pbar i{position:absolute;right:0;top:0;bottom:0;background:var(--teal);border-radius:4px;box-shadow:0 0 8px rgba(45,212,191,.5)}
+.flag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;margin:1px;border:1px solid}
+.f-r{background:rgba(248,113,113,.1);color:var(--red);border-color:rgba(248,113,113,.35)}
+.f-o{background:rgba(251,191,36,.1);color:var(--amber);border-color:rgba(251,191,36,.35)}
+.f-g{background:rgba(52,211,153,.1);color:var(--green);border-color:rgba(52,211,153,.35)}
+.f-m{background:rgba(139,154,184,.1);color:var(--mut);border-color:rgba(139,154,184,.35)}
+.cmp{max-height:400px;overflow:auto;display:flex;flex-direction:column;gap:4px;padding-left:4px}
+.cmp::-webkit-scrollbar{width:6px}.cmp::-webkit-scrollbar-thumb{background:#C5CEDB;border-radius:6px}
+.ci{display:grid;grid-template-columns:1fr 54px;gap:8px;align-items:center;padding:6px 8px;border-radius:10px;cursor:pointer;transition:.15s}
+.ci:hover{background:#EAF0F8}.ci.sel{background:rgba(45,212,191,.1)}
+.ci .nm{font-size:12.5px;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ci .b{height:6px;background:#E3E8F0;border-radius:4px;position:relative;margin:3px 0}
+.ci .b i{position:absolute;right:0;top:0;bottom:0;border-radius:4px}
+.ci .gp{font-size:13px;font-weight:700;text-align:center;direction:ltr;border-radius:8px;padding:4px 0}
+.gp.neg{color:var(--red);background:rgba(248,113,113,.1)}.gp.mid{color:var(--amber);background:rgba(251,191,36,.1)}.gp.pos{color:var(--green);background:rgba(52,211,153,.1)}
+.cmpleg{display:flex;gap:14px;font-size:12px;color:var(--mut);margin-bottom:8px}
+.cmpleg span:before{content:"";display:inline-block;width:14px;height:6px;border-radius:3px;margin-left:5px;background:var(--c);vertical-align:middle}
+.asec{margin-top:16px}
+.acards{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}
+.acards .kpi{padding:10px 10px 8px}
+.acards .kpi .h{font-size:11.5px;line-height:1.45;min-height:34px}
+.acards .kpi .v{font-size:18px;padding:6px 0 2px}
+.acards .kpi:after{width:60px;height:60px;left:-20px;bottom:-28px}
+@media(max-width:1200px){.acards{grid-template-columns:repeat(4,1fr)}}
+
+#ksa .land{fill:#16233F;stroke:#1F7A8C;stroke-width:2.2;stroke-opacity:.6;filter:drop-shadow(0 0 10px rgba(45,212,191,.18))}
+#ksa .grid{stroke:#1A2644;stroke-width:1}
+#ksa .sea{font-size:20px;fill:#3B5B8A;font-style:italic}
+#ksa .mk{cursor:pointer;transition:opacity .2s}
+#ksa .mk:hover circle.dot{stroke-width:3}
+#ksa .plc{font-size:17px;fill:#6B7280;font-weight:600}
+#ksa .lbl{font-size:19px;font-weight:700;fill:#14213D;paint-order:stroke;stroke:#F3F5F9;stroke-width:6px}
+#ksa .cnt{font-size:17px;fill:#F3F5F9;font-weight:700}
+#ksa .pulse{animation:pl 1.6s ease-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes pl{0%{transform:scale(1);opacity:.7}100%{transform:scale(2.2);opacity:0}}
+.mlist{display:flex;flex-direction:column;gap:6px;max-height:230px;overflow:auto}
+.mi{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;cursor:pointer;font-size:12.5px;transition:.15s}
+.mi:hover{border-color:var(--teal)}.mi.on{border-color:var(--teal);background:rgba(45,212,191,.1)}
+.mi .r{display:flex;justify-content:space-between;color:var(--mut);font-size:11.5px;margin-top:3px}
+.mi .r b{color:var(--teal);direction:ltr}
+.msep{height:1px;background:var(--line);margin:12px 0}
+@media(max-width:1200px){.mapsec{grid-template-columns:1fr}}
+.row3{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-top:16px}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--mut);flex-wrap:wrap;margin-top:8px}
+.legend span:before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-left:5px;background:var(--c)}
+.tip{position:fixed;pointer-events:none;background:#0F1A30;border:1px solid var(--teal);color:#fff;padding:7px 10px;border-radius:10px;font-size:12px;opacity:0;transition:opacity .12s;z-index:9;max-width:260px;line-height:1.6;box-shadow:0 0 14px rgba(45,212,191,.25)}
+.vstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.vstats div{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:8px;text-align:center}
+.vstats b{display:block;font-size:18px;color:var(--red);direction:ltr}
+.vstats div:nth-child(2) b{color:var(--amber)}.vstats div:nth-child(3) b{color:var(--purple)}
+.vstats span{font-size:11.5px;color:var(--mut)}
+footer{color:var(--mut);font-size:11.5px;text-align:center;margin:18px 0 6px;line-height:1.8}
+@media(max-width:1200px){.layout{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(3,1fr)}.gauges,.bottom{grid-template-columns:repeat(2,1fr)}.row2,.row3{grid-template-columns:1fr}.slicer{max-height:220px}}
+
+/* ===== ثيم الكحلي والذهبي ===== */
+body{background:#F3F5F9!important}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-track{background:#EEF2F8}::-webkit-scrollbar-thumb{background:#C5CEDB;border-radius:6px}
+
+header.top{color:#fff!important;border-bottom:3px solid #B8860B;box-shadow:0 10px 28px -14px rgba(20,33,61,.55)!important}
+header.top h1{color:#fff!important}
+
+:root{--navy:#14213D}
+#ksa .land{fill:#E9EEF6;stroke:#14213D;stroke-width:1.6;stroke-opacity:.55;filter:none}
+#ksa .lbl{fill:#14213D;stroke:#ffffff;stroke-width:5px;stroke-opacity:.9}
+#ksa .plc{fill:#8A94A6}
+#ksa .sea{fill:#5B7BA8}
+#ksa .grid{stroke:#E3E8F0}
+/* ===== حركة الكروت الموحدة ===== */
+.kpi{transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease!important;will-change:transform}
+.kpi:hover{transform:translateY(-6px)!important;border-color:var(--c)!important;box-shadow:0 12px 26px -8px rgba(20,33,61,.28),0 0 18px color-mix(in srgb,var(--c) 40%,transparent)!important;z-index:2}
+.gauge{transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease!important;will-change:transform}
+.gauge:hover{transform:translateY(-6px)!important;border-color:var(--c,#1F7A8C)!important;box-shadow:0 12px 26px -8px rgba(20,33,61,.28),0 0 18px color-mix(in srgb,var(--c,#1F7A8C) 40%,transparent)!important;z-index:2}
+.kpi:after{transition:opacity .25s ease,transform .35s ease}
+.kpi:hover:after{opacity:.16!important;transform:scale(1.15)}
+@media (prefers-reduced-motion:reduce){.kpi,.gcard,.gauge,.mini>div{transition:none!important}.kpi:hover,.gcard:hover,.gauge:hover,.mini>div:hover{transform:none!important}}
+.row2{grid-template-columns:1fr 1fr !important;align-items:start}
+.row2 .card{padding-top:12px;padding-bottom:12px}
+.row2 .durbox{padding:6px 10px}
+.row2 .tstats .v{font-size:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div><h1 id="title">لوحة متابعة المشاريع — المنطقة الغربية</h1><div class="sub" id="subtitle"></div></div>
+    <div class="today" id="today" style="display:none"></div>
+  </header>
+
+  <div class="fbar card">
+    <div class="frow">
+      <select class="dd" id="selRegion" style="display:none"></select>
+      <label class="flab" for="selProj">المشروع:</label>
+      <select class="dd wide" id="selProj" onchange="onProj(this.value)"></select>
+      <span class="hint" id="fcount"></span>
+      <button class="clr" onclick="sel.region.clear();sel.proj.clear();render()">✕ إلغاء الفلاتر</button>
+    </div>
+  </div>
+
+
+  <div class="layout">
+
+    <!-- main -->
+    <main>
+      <div class="kpis" id="kpis"></div>
+      <div class="row2">
+        <div class="card">
+          <h3>المدة الزمنية</h3>
+          <div class="durbox"><div>مدة المشروع</div><div id="dur">-</div></div>
+          <div class="dates"><div>تاريخ البداية<b id="dStart">-</b></div><div style="text-align:left">تاريخ الانتهاء<b id="dEnd">-</b></div></div>
+          <div class="track"><div class="fill" id="tFill"></div><div class="mark" id="tMark">▼</div></div>
+          <div class="tstats"><div><div class="h">الوقت المنقضي</div><div class="v" id="tEl">-</div></div><div><div class="h">المدة المتبقية (يوم)</div><div class="v" id="tRem">-</div></div></div>
+          <div class="status" id="tStatus"></div>
+        </div>
+        
+        <div class="card">
+          <h3>المؤشرات المالية</h3>
+          <svg id="bar" viewBox="0 0 640 290" preserveAspectRatio="xMidYMid meet" style="width:100%;height:265px"></svg>
+        </div>
+        
+      </div>
+      <div class="gauges" id="gauges"></div>
+      <div class="bottom" id="bottom"></div>
+    </main>
+  </div>
+
+  <div class="row3">
+    <div class="card">
+      <h3>جدول المشاريع ومؤشرات الخطر</h3>
+      <div class="tw"><table class="tbl" id="tbl"></table></div>
+      <div class="legend">
+        <span style="--c:#C0392B">متأخر عن تاريخ الانتهاء / التكلفة أعلى من الـ Budget</span>
+        <span style="--c:#B8860B">الإنجاز أقل من الوقت المنقضي بأكثر من 15%</span>
+        <span style="--c:#6B7280">بيانات ناقصة</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>الإنجاز مقابل الوقت المنقضي</h3>
+      <div class="cmpleg"><span style="--c:var(--teal)">نسبة الإنجاز</span><span style="--c:var(--purple)">الوقت المنقضي</span></div>
+      <div class="cmp" id="scatter"></div>
+      <div class="hint">الفرق = الإنجاز − الوقت المنقضي. والقيمة السالبة (بالأحمر) تعني أن المشروع متأخر عن جدوله الزمني. المشاريع مرتبة من الأكثر تأخيراً.</div>
+    </div>
+  </div>
+
+  <div class="card asec">
+    <h3>المبالغ المحملة على المشروع</h3>
+    <div class="acards" id="alloc"></div>
+    <div class="hint">التحميل يتم بنسبة "المتبقي" للمشروع من إجمالي المتبقي لكل المشاريع، مضروبة في إجماليات الشركة.</div>
+  </div>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+const DATA = {"P": [{"id": 1, "region": "المنطقة الغربية", "mgr": "المهندس يوسف محسن", "name": "القصيم", "sal": 37401.0, "sa": 0.9692281563807399, "tot": 11.96922815638074, "client": "شركة السلومي", "value": 26404507.8, "inv": 23014115.04, "budget": 26258183.16, "cost": 32339217.0, "prog": 0.98, "start": "2025-05-31", "end": "2026-09-25", "rate_pm": 0.8, "rate_cl": 1.0, "share": 0.008559534365099968}, {"id": 2, "region": "المنطقة الغربية", "mgr": "المهندس يوسف محسن", "name": "ينبع", "sal": 138422.0, "sa": 25.470377534151474, "tot": 41.470377534151474, "client": "شركة السلومي", "value": 25675989.0, "inv": 6540424.0, "budget": 16745210.0, "cost": 4823131.0, "prog": 0.2682, "start": "2025-05-01", "end": "2030-04-30", "rate_pm": 0.9, "rate_cl": 1.0, "share": 0.04831048725254595}, {"id": 3, "region": "المنطقة الغربية", "mgr": "المهندس يوسف محسن", "name": "صيانة البحر الأحمر", "sal": 20000.0, "sa": 0.04889318238922793, "tot": 1.048893182389228, "client": "شركة السلومي", "value": 342060.0, "inv": 171030.0, "budget": 200000.0, "cost": 28518.0, "prog": 0.95, "start": "2026-09-10", "end": "2026-12-01", "rate_pm": null, "rate_cl": null, "share": 0.00043178984444948107}], "T": {"sa": 108, "sasal": 492218, "ry": 49, "rysal": 384732, "viol": 215400}, "V": []};
+const P = DATA.P, T = DATA.T, V = DATA.V;
+const MS = 86400000;
+const TODAY = (()=>{const d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate());})();
+const pd = s => { if(!s) return null; const [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d); };
+const fmtD = d => d ? d.toLocaleDateString('en-GB') : '-';
+const sel = {region:new Set(), proj:new Set()};
+let sortKey='id', sortDir=1;
+
+const nf = new Intl.NumberFormat('en-US',{maximumFractionDigits:0});
+function money(v){ if(v==null||isNaN(v)) return '-'; const a=Math.abs(v);
+  if(a>=1e9) return (v/1e9).toFixed(2)+' مليار'; if(a>=1e6) return (v/1e6).toFixed(a>=1e8?1:2)+' مليون'; if(a>=1e3) return (v/1e3).toFixed(a>=1e5?0:1)+' ألف'; return nf.format(v); }
+const full = v => v==null||isNaN(v) ? '-' : nf.format(v);
+const pct = (v,d=1) => v==null||!isFinite(v) ? '-' : (v*100).toFixed(d)+'%';
+const sum = (a,k) => a.reduce((s,x)=>s+(x[k]||0),0);
+
+// derived per project
+P.forEach(p=>{
+  p.s=pd(p.start); p.e=pd(p.end);
+  p.remaining = (p.value||0)-(p.inv||0);           // المتبقي = قيمة المشروع - المفوتر (كما في الملف)
+  p.remDays = (p.s&&p.e) ? Math.round((p.e-TODAY)/MS) : null;
+  p.durDays = (p.s&&p.e) ? Math.round((p.e-p.s)/MS) : null;
+  p.timePct = p.durDays ? Math.max(0,Math.min(1,(p.durDays-Math.min(p.remDays,p.durDays))/p.durDays)) : null;
+  p.overdue = p.remDays!=null && p.remDays<0 && (p.prog||0)<1;
+  p.overBudget = p.budget && p.cost>p.budget;
+  p.lag = p.timePct!=null && (p.timePct-(p.prog||0))>0.15;
+  p.missing = !p.s || !p.e;
+});
+const regions = [...new Set(P.map(p=>p.region))];
+
+function filtered(){
+  return P.filter(p=>(!sel.region.size||sel.region.has(p.region)) && (!sel.proj.size||sel.proj.has(p.name)));
+}
+
+// ---------- slicers
+function renderSlicers(){
+  const rs=document.getElementById('selRegion'), ps=document.getElementById('selProj');
+  const rv=sel.region.size===1?[...sel.region][0]:'';
+  rs.innerHTML=`<option value="">الكل (${P.length})</option>`+regions.map(g=>`<option value="${g}">${g} (${P.filter(p=>p.region===g).length})</option>`).join('');
+  rs.value=rv; rs.classList.toggle('act',!!rv);
+  const list=P.filter(p=>!sel.region.size||sel.region.has(p.region));
+  const pv=sel.proj.size===1?[...sel.proj][0]:'';
+  ps.innerHTML=`<option value="">كل المشاريع (${list.length})</option>`+list.map(p=>`<option value="${p.name.replace(/"/g,'&quot;')}">${p.name}</option>`).join('');
+  ps.value=pv; ps.classList.toggle('act',!!pv);
+  document.getElementById('fcount').textContent = rv ? `${list.length} مشروع في ${rv}` : '';
+}
+function onRegion(v){ sel.region.clear(); if(v) sel.region.add(v);
+  [...sel.proj].forEach(n=>{const p=P.find(x=>x.name===n); if(v&&p.region!==v) sel.proj.delete(n);}); render(); }
+function onProj(v){ sel.proj.clear(); if(v) sel.proj.add(v); render(); }
+function toggle(k,v,e){
+  const set=sel[k]; const only=set.size===1&&set.has(v); set.clear(); if(!only) set.add(v);
+  if(k==='proj' && set.size && sel.region.size){ const p=P.find(x=>x.name===v); if(!sel.region.has(p.region)){sel.region.clear(); sel.region.add(p.region);} }
+  render();
+}
+function clearSel(k){ sel[k].clear(); render(); }
+
+// ---------- gauge (half donut like the Excel 200% trick)
+function gauge(val,label,color){
+  const v=Math.max(0,Math.min(1,val||0)), R=80, cx=100, cy=95, w=20;
+  const pt=a=>[cx-R*Math.cos(a), cy-R*Math.sin(a)];
+  const arc=(a0,a1)=>{const [x0,y0]=pt(a0),[x1,y1]=pt(a1);return `M${x0},${y0} A${R},${R} 0 0 1 ${x1},${y1}`;};
+  const over = val>1;
+  return `<div class="card gauge"><svg viewBox="0 0 200 120">
+    <path d="${arc(0,Math.PI)}" stroke="#E3E8F0" stroke-width="${w}" fill="none" stroke-linecap="round"/>
+    ${v>0?`<path d="${arc(0,Math.PI*v)}" stroke="${over?'#C0392B':color}" stroke-width="${w}" fill="none" stroke-linecap="round" style="filter:drop-shadow(0 0 6px ${over?'#C0392B':color})"/>`:''}
+    <text x="100" y="88" text-anchor="middle" font-size="24" font-weight="700" fill="${over?'#C0392B':color}">${pct(val,1)}</text>
+    <text x="22" y="114" text-anchor="middle" font-size="10" fill="#6B7280">0%</text><text x="178" y="114" text-anchor="middle" font-size="10" fill="#6B7280">100%</text>
+  </svg><div class="t">${label}</div></div>`;
+}
+
+// ---------- tooltip
+const tip=document.getElementById('tip');
+function showTip(e,h){tip.innerHTML=h;tip.style.opacity=1;tip.style.left=(e.clientX+14)+'px';tip.style.top=(e.clientY+14)+'px';}
+function hideTip(){tip.style.opacity=0;}
+
+// ---------- main render
+function render(){
+  renderSlicers();
+  const F=filtered(); const one=F.length===1?F[0]:null;
+  const value=sum(F,'value'), inv=sum(F,'inv'), budget=sum(F,'budget'), cost=sum(F,'cost');
+  const remaining=value-inv;
+  const progAvg = F.length? F.reduce((s,p)=>s+(p.prog||0),0)/F.length : 0;  // متوسط بسيط كما في PIVT
+  const progW = value? F.reduce((s,p)=>s+(p.prog||0)*(p.value||0),0)/value : 0;
+
+  // title (same logic as PIVT!AL1)
+  const regs=[...new Set(F.map(p=>p.region))], mgrs=[...new Set(F.map(p=>p.mgr))];
+  let title='لوحة متابعة جميع المشاريع';
+  if(one) title='لوحة متابعة بيانات مشروع : '+one.name;
+  else if(regs.length===1 && F.length) title='لوحة متابعة مشاريع : '+regs[0]+' - '+mgrs.join('، ');
+  document.getElementById('title').textContent=title;
+  document.getElementById('subtitle').textContent = one ? `${one.region} — ${one.mgr} — العميل: ${one.client||'-'}` : `${F.length} مشروع من أصل ${P.length}`;
+  document.getElementById('today').textContent='تاريخ اليوم: '+fmtD(TODAY);
+
+  // time
+  let s,e;
+  if(one){s=one.s;e=one.e;}
+  else { const ss=F.filter(p=>p.s).map(p=>p.s), ee=F.filter(p=>p.e).map(p=>p.e);
+    s=ss.length?new Date(Math.min(...ss)):null; e=ee.length?new Date(Math.max(...ee)):null; }
+  const remDays = (s&&e)?Math.round((e-TODAY)/MS):null, dur=(s&&e)?Math.round((e-s)/MS):null;
+  const tp = dur? Math.max(0,Math.min(1,(dur-Math.min(remDays,dur))/dur)) : 0;
+
+  // KPIs
+  const k=[
+    ['قيمة المشروع',money(value),full(value)],
+    ['المفوتر',money(inv),full(inv)],
+    ['المتبقي (القيمة - المفوتر)',money(remaining),full(remaining)],
+    ['الـ Budget',money(budget),full(budget)],
+    ['التكلفة حتى تاريخه',money(cost),budget?pct(cost/budget)+' من الـ Budget':'-', cost>budget&&budget],
+    ['المدة المتبقية للانتهاء', remDays==null?'-':nf.format(remDays)+' يوم', one?'':(F.length>1?'حتى آخر مشروع ينتهي':''), remDays!=null&&remDays<0]
+  ];
+  const KC=['var(--teal)','var(--blue)','var(--purple)','var(--amber)','var(--green)','var(--pink)'];
+  document.getElementById('kpis').innerHTML=k.map((x,i)=>`<div class="kpi${x[3]?' warn':''}" style="--c:${KC[i]}"><div class="h">${x[0]}</div><div class="v">${x[1]}</div><div class="s">${x[2]}</div></div>`).join('');
+
+  // timeline
+  const ymd=(a,b)=>{ if(!a||!b) return '-'; let y=b.getFullYear()-a.getFullYear(), m=b.getMonth()-a.getMonth(), d=b.getDate()-a.getDate();
+    if(d<0){m--; d+=new Date(b.getFullYear(),b.getMonth(),0).getDate();} if(m<0){y--;m+=12;} return `${y} سنة - ${m} شهر - ${d} يوم`; };
+  document.getElementById('dur').textContent=ymd(s,e);
+  document.getElementById('dStart').textContent=fmtD(s);
+  document.getElementById('dEnd').textContent=fmtD(e);
+  document.getElementById('tFill').style.width=(tp*100)+'%';
+  document.getElementById('tMark').style.right=(tp*100)+'%';
+  document.getElementById('tEl').textContent=pct(tp,0);
+  document.getElementById('tRem').textContent=remDays==null?'-':nf.format(remDays);
+  const st=document.getElementById('tStatus');
+  if(!s||!e){st.className='status mid';st.textContent='لا توجد تواريخ بداية/انتهاء لهذا الاختيار.';}
+  else if(remDays<0 && progAvg<1){st.className='status bad';st.textContent=`متأخر ${nf.format(-remDays)} يوم عن تاريخ الانتهاء، والإنجاز ${pct(progAvg,0)}.`;}
+  else if(tp-progAvg>0.15){st.className='status mid';st.textContent=`الإنجاز (${pct(progAvg,0)}) أقل من الوقت المنقضي (${pct(tp,0)}) — يحتاج متابعة.`;}
+  else {st.className='status ok';st.textContent=`الإنجاز (${pct(progAvg,0)}) متوافق مع الوقت المنقضي (${pct(tp,0)}).`;}
+
+  // bar chart
+  drawBar([['قيمة المشروع',value,'#1F7A8C'],['المفوتر',inv,'#1F4E8C'],['المتبقي',remaining,'#6D4C9F'],['Budget',budget,'#B8860B'],['التكلفة حتى تاريخه',cost,cost>budget&&budget?'#C0392B':'#2E8B6E']]);
+
+  // gauges (same 5 as Excel)
+  const saT=sum(F,'tot'), saS=sum(F,'sa');
+  document.getElementById('gauges').innerHTML=
+    gauge(value?inv/value:0,'نسبة الفوترة','#2E8B6E')+
+    gauge(progAvg,'نسبة الإنجاز'+(F.length>1?` <small style="color:#6B7280;font-weight:400">(المرجّح: ${pct(progW,0)})</small>`:''),'#1F4E8C')+
+    gauge(value?budget/value:0,'الـ Budget إلى قيمة المشروع','#1F7A8C')+
+    gauge(budget?cost/budget:0,'التكلفة الفعلية إلى الـ Budget','#B8860B')+
+    gauge(saT?saS/saT:0,'نسبة السعودة','#6D4C9F');
+
+  // allocation (same as PIVT BM..BR)
+  const share=sum(F,'share'), aSa=share*T.sa, aSaSal=share*T.sasal, aRy=share*T.ry, aRySal=share*T.rysal, aV=share*T.viol;
+  const al=[
+    ['نسبة المتبقي من المشروع إلى المتبقي الإجمالي',pct(share,2)],
+    ['عدد السعوديين الذين يتحملهم المشروع',aSa.toFixed(2)],
+    ['رواتب السعوديين المحملة على المشروع',full(aSaSal)],
+    ['عدد موظفي مكتب الرياض المحملين',aRy.toFixed(2)],
+    ['رواتب مكتب الرياض المحملة على المشروع',full(aRySal)],
+    ['إجمالي الرواتب المحملة على المشروع',full(aSaSal+aRySal),'sum'],
+    ['حصة المشروع من مخالفات السجل الرئيسي',full(aV)],
+    ['إجمالي المبالغ المحملة على المشروع',full(aSaSal+aRySal+aV),'tot'],
+  ];
+  const AC=['var(--teal)','var(--blue)','var(--blue)','var(--purple)','var(--purple)','var(--green)','var(--red)','var(--amber)'];
+  document.getElementById('alloc').innerHTML=al.map((x,i)=>`<div class="kpi" style="--c:${AC[i]}${x[2]==='tot'?';box-shadow:0 0 0 1px var(--amber),0 0 22px rgba(251,191,36,.18)':''}"><div class="h">${x[0]}</div><div class="v">${x[1]}</div></div>`).join('');
+
+  // bottom (ratings + salaries + headcount)
+  const avgOf=k=>{const a=F.filter(p=>p[k]!=null);return a.length?a.reduce((s,p)=>s+p[k],0)/a.length:null;};
+  const rp=avgOf('rate_pm'), rc=avgOf('rate_cl');
+  const stars=v=>v==null?'<span style="font-size:15px;color:#6B7280">لا يوجد تقييم</span>':`${pct(v,0)} <span class="stars">${'★'.repeat(Math.round(v*5))}${'☆'.repeat(5-Math.round(v*5))}</span>`;
+  document.getElementById('bottom').innerHTML=`
+    <div class="bt" style="--c:var(--green)"><div class="h">تقييم أداء المشروع (مدير المشروع)</div><div class="v">${stars(rp)}</div></div>
+    <div class="bt" style="--c:var(--amber)"><div class="h">تقييم العميل لشركة السلومي</div><div class="v">${stars(rc)}</div></div>
+    <div class="bt b2"><div class="h">إجمالي رواتب شهر سبتمبر</div><div class="v">${full(sum(F,'sal'))}</div></div>
+    <div class="bt b2" style="--c:var(--purple)"><div class="h">إجمالي العدد</div><div class="v">${nf.format(Math.round(saT))}</div></div>
+    <div class="bt b2" style="--c:var(--pink)"><div class="h">إجمالي السعوديين</div><div class="v">${nf.format(Math.round(saS))}</div></div>`;
+
+  drawTable(F); drawScatter(F); 
+}
+
+// ---------- map
+const KSA=[[34.956,29.357],[36.069,29.197],[36.501,29.505],[36.741,29.865],[37.504,30.004],[37.668,30.339],[37.998,30.508],[37.002,31.508],[39.005,32.010],[39.195,32.161],[40.400,31.890],[41.890,31.190],[44.709,29.179],[46.569,29.099],[47.460,29.003],[47.709,28.526],[48.416,28.552],[48.808,27.690],[49.300,27.461],[49.471,27.110],[50.152,26.690],[50.213,26.277],[50.113,25.944],[50.240,25.608],[50.527,25.328],[50.661,24.999],[50.810,24.755],[51.112,24.556],[51.390,24.627],[51.580,24.245],[51.617,24.014],[52.001,23.001],[55.007,22.497],[55.208,22.708],[55.667,22.000],[54.999,19.999],[52.000,19.000],[49.117,18.617],[48.184,18.167],[47.466,17.117],[47.000,16.949],[46.749,17.283],[46.367,17.233],[45.400,17.333],[45.217,17.433],[44.063,17.410],[43.792,17.320],[43.381,17.580],[43.116,17.088],[43.219,16.667],[42.780,16.348],[42.650,16.775],[42.348,17.076],[42.271,17.475],[41.754,17.833],[41.221,18.672],[40.939,19.486],[40.248,20.175],[39.802,20.339],[39.139,21.292],[39.024,21.987],[39.066,22.580],[38.493,23.688],[38.024,24.079],[37.484,24.285],[37.155,24.858],[37.209,25.085],[36.932,25.603],[36.640,25.826],[36.249,26.570],[35.640,27.377],[35.130,28.063],[34.632,28.059],[34.788,28.607],[34.832,28.957],[34.956,29.357]];
+const PLACES={
+  'east':{n:'المنطقة الشرقية',lon:50.2,lat:23.3},
+  'yanbu':{n:'ينبع',lon:38.06,lat:24.09,lp:'r'},
+  'redsea':{n:'البحر الأحمر',lon:36.95,lat:25.55,lp:'r'},
+  'abqaiq':{n:'بقيق',lon:49.67,lat:25.93,lp:'r'},
+  'tanajib':{n:'تناجيب',lon:48.88,lat:27.78,lp:'r'},
+  'qassim':{n:'القصيم',lon:43.97,lat:26.33},
+  'riyadh':{n:'الرياض',lon:46.2,lat:24.6},
+  'naseem':{n:'الرياض - النسيم',lon:46.83,lat:24.72},
+  'ahsa':{n:'الأحساء',lon:49.59,lat:25.38}
+};
+const LOC={'القصيم':'qassim','ويل سايد':'east','الجافورة 9':'east','الجافورة 6':'east','ينبع':'yanbu','صيانة البحر الأحمر':'redsea',
+  'شبكة صرف الصحي بقيق':'abqaiq','تحسين ابار التخلص بتناجيب':'tanajib','وجهة الربي':'riyadh','سنا الربى':'riyadh',
+  'عمارة الفرائضي':'naseem','مبنى تويوتا الجديد':'naseem','فيلا البدرية 10':'ahsa','فيلا البدرية 12':'ahsa','مبنى الإمام والمؤذن':'ahsa',
+  'RTR':'east','ألاميرال':'east','منطقة معالجة المياه المبخرة هيونداي':'east','هيونداي أعمال الاسفلت CV04':'east'};
+const MAPN={'منطقة معالجة المياه المبخرة هيونداي':'هيونداي','هيونداي أعمال الاسفلت CV04':'CV04'}; // مكان مذكور لكنه ليس اسم مدينة
+let mapSel=null;
+const L0=34.3,L1=56.0,A0=15.8,A1=32.6,MW=760,MH=600,K=Math.cos(24*Math.PI/180);
+const sc=Math.min(MW/((L1-L0)*K),MH/(A1-A0));
+const ox=(MW-(L1-L0)*K*sc)/2, oy=(MH-(A1-A0)*sc)/2;
+const prj=(lon,lat)=>[MW-(ox+(lon-L0)*K*sc), oy+(A1-lat)*sc].map((v,i)=>i===0?MW-v:v);
+function statusColor(ps){ if(ps.some(p=>p.overdue||p.overBudget)) return '#C0392B'; if(ps.some(p=>p.lag)) return '#B8860B'; return '#1F7A8C'; }
+function drawMap(F){
+  const inF=new Set(F.map(p=>p.name));
+  let h='';
+  for(let lon=36;lon<=56;lon+=4){const [x1,y1]=prj(lon,A0),[x2,y2]=prj(lon,A1); h+=`<line class="grid" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;}
+  for(let lat=18;lat<=32;lat+=4){const [x1,y1]=prj(L0,lat),[x2,y2]=prj(L1,lat); h+=`<line class="grid" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;}
+  h+=`<path class="land" d="M${KSA.map(c=>prj(c[0],c[1]).join(',')).join('L')}Z"/>`;
+  const [sx,sy]=prj(37.2,21.2), [gx,gy]=prj(50.6,29.0);
+  h+=`<text class="sea" x="${sx}" y="${sy}" text-anchor="middle" transform="rotate(-55 ${sx} ${sy})">البحر الأحمر</text><text class="sea" x="${gx}" y="${gy}" text-anchor="middle">الخليج العربي</text>`;
+  const mx=Math.max(...P.map(p=>p.value||0));
+  const POS={'القصيم':[43.97,26.33,'t'],'ويل سايد':[50.4,24.6,'r'],'الجافورة 9':[50.4,23.3,'r'],'الجافورة 6':[50.4,22.0,'r'],
+    'ينبع':[38.06,24.09,'r'],'صيانة البحر الأحمر':[36.95,25.55,'r'],'شبكة صرف الصحي بقيق':[49.67,25.93,'r'],'تحسين ابار التخلص بتناجيب':[48.88,27.78,'r'],
+    'سنا الربى':[45.9,24.6,'l'],'وجهة الربي':[46.9,24.6,'t'],
+    'عمارة الفرائضي':[47.75,24.95,'c',[47.15,22.75]],'مبنى تويوتا الجديد':[48.0,24.55,'c',[47.15,22.0]],
+    'RTR':[52.3,21.0,'c',[48.85,19.0]],'ألاميرال':[53.7,21.35,'c',[48.85,18.25]],'منطقة معالجة المياه المبخرة هيونداي':[50.15,22.65,'c',[48.85,17.5]],'هيونداي أعمال الاسفلت CV04':[50.75,22.65,'c',[48.85,16.75]],
+    'فيلا البدرية 10':[49.45,25.5,'c',[48.85,21.25]],'فيلا البدرية 12':[49.2,25.15,'c',[48.85,20.5]],'مبنى الإمام والمؤذن':[49.65,25.05,'c',[48.85,19.75]]};
+  // أسماء المناطق المجمعة
+  [['الرياض',46.4,23.75],['الأحساء',48.75,25.95],['المنطقة الشرقية',53.75,22.55]].forEach(([nm,lo,la])=>{const [x,y]=prj(lo,la); h+=`<text class="plc" x="${x}" y="${y}" text-anchor="middle">${nm}</text>`;});
+  P.filter(p=>POS[p.name]).forEach(p=>{
+    const [lo,la,lp,lab]=POS[p.name], [x,y]=prj(lo,la);
+    const on=inF.has(p.name), c=on?statusColor([p]):'#6B7280', r=7+10*Math.sqrt((p.value||0)/mx), pulse=on&&sel.proj.has(p.name);
+    let lx=x,ly=y-r-8,anc='middle';
+    if(lp==='r'){lx=x+r+7;ly=y+6;anc='start';} else if(lp==='l'){lx=x-r-7;ly=y+6;anc='end';}
+    let lead='';
+    if(lab){const [tx,ty]=prj(lab[0],lab[1]); const st=lab[2]==='s', ex=st?tx-6:tx+6; lx=tx; ly=ty+5; anc=st?'start':'end'; lead=`<path class="lead" d="M${x},${y} L${ex},${ty}" stroke="${c}" stroke-width="1.2" stroke-dasharray="3 3" fill="none" opacity=".75"/><circle cx="${ex}" cy="${ty}" r="2" fill="${c}"/>`;}
+    const tipH=`<b>${p.name}</b><br>${PLACES[LOC[p.name]].n}<br>الإنجاز: ${pct(p.prog,0)}<br>القيمة: ${money(p.value)}`;
+    h+=`<g class="mk" style="opacity:${on?1:.35}" onclick="pickProj('${p.name.replace(/'/g,"\\'")}')" onmousemove="showTip(event,'${tipH.replace(/'/g,"\\'")}')" onmouseleave="hideTip()">
+      ${lead}${pulse?`<circle class="pulse" cx="${x}" cy="${y}" r="${r}" fill="${c}"/>`:''}
+      <circle class="dot" cx="${x}" cy="${y}" r="${r}" fill="${c}" fill-opacity=".85" stroke="${pulse?'#fff':c}" stroke-width="${pulse?3:1.5}" style="filter:drop-shadow(0 0 6px ${c})"/>
+      <text class="lbl" x="${lx}" y="${ly}" text-anchor="${anc}">${p.name}</text></g>`;
+  });
+  document.getElementById('ksa').innerHTML=h;
+}
+function mapClick(k){ const ps=P.filter(p=>LOC[p.name]===k); if(ps.length===1){ pickProj(ps[0].name); } }
+function pickProj(n){ const p=P.find(x=>x.name===n); sel.proj.clear(); sel.proj.add(n); if(sel.region.size&&!sel.region.has(p.region)){sel.region.clear();} render(); }
+
+function drawBar(items){
+  const svg=document.getElementById('bar'), W=640,H=290,L=6,Rr=6,top=30,bot=48;
+  const max=Math.max(1,...items.map(i=>i[1]||0)); const bw=(W-L-Rr)/items.length;
+  let h=`<line x1="${L}" x2="${W-Rr}" y1="${H-bot}" y2="${H-bot}" stroke="#C5CEDB"/>`;
+  items.forEach((it,i)=>{
+    const v=it[1]||0, bh=(H-top-bot)*v/max, x=W-Rr-(i+1)*bw+bw*0.2, y=H-bot-bh;
+    h+=`<rect x="${x}" y="${y}" width="${bw*0.6}" height="${Math.max(bh,0)}" rx="6" fill="${it[2]}" style="filter:drop-shadow(0 0 8px ${it[2]}66)" onmousemove="showTip(event,'${it[0]}<br><b>${full(v)}</b>')" onmouseleave="hideTip()"><animate attributeName="height" from="0" to="${bh}" dur=".45s"/><animate attributeName="y" from="${H-bot}" to="${y}" dur=".45s"/></rect>
+       <text x="${x+bw*0.3}" y="${y-7}" text-anchor="middle" font-size="13" font-weight="700" fill="#14213D">${money(v)}</text>
+       <text x="${x+bw*0.3}" y="${H-bot+20}" text-anchor="middle" font-size="12.5" font-weight="600" fill="#14213D">${it[0]}</text>`;
+  });
+  svg.innerHTML=h;
+}
+
+const cols=[
+  ['id','#'],['name','المشروع'],['region','المنطقة'],['value','القيمة'],['inv','المفوتر'],['budget','Budget'],['cost','التكلفة'],
+  ['prog','الإنجاز'],['timePct','الوقت المنقضي'],['remDays','متبقي (يوم)'],['flags','المؤشرات']
+];
+function drawTable(F){
+  const rows=[...F].sort((a,b)=>{const x=a[sortKey],y=b[sortKey]; if(x==null) return 1; if(y==null) return -1; return (x>y?1:x<y?-1:0)*sortDir;});
+  let h='<tr>'+cols.map(c=>`<th onclick="sortBy('${c[0]}')">${c[1]}${sortKey===c[0]?(sortDir>0?' ▲':' ▼'):''}</th>`).join('')+'</tr>';
+  rows.forEach(p=>{
+    const fl=[]; if(p.overdue) fl.push('<span class="flag f-r">متأخر</span>'); if(p.overBudget) fl.push('<span class="flag f-r">تجاوز Budget</span>');
+    if(p.lag) fl.push('<span class="flag f-o">إنجاز متأخر</span>'); if(p.missing) fl.push('<span class="flag f-m">بدون تواريخ</span>');
+    if(!fl.length) fl.push('<span class="flag f-g">سليم</span>');
+    h+=`<tr class="${sel.proj.has(p.name)?'sel':''}" onclick="toggle('proj','${p.name.replace(/'/g,"\\'")}',event)">
+      <td>${p.id}</td><td style="text-align:right">${p.name}</td><td>${p.region}</td>
+      <td class="n">${money(p.value)}</td><td class="n">${money(p.inv)}</td><td class="n">${money(p.budget)}</td><td class="n" style="${p.overBudget?'color:#C0392B;font-weight:700':''}">${money(p.cost)}</td>
+      <td><div style="display:flex;align-items:center;gap:6px"><div class="pbar"><i style="width:${(p.prog||0)*100}%"></i></div>${pct(p.prog,0)}</div></td>
+      <td>${pct(p.timePct,0)}</td><td class="n" style="${p.remDays<0?'color:#C0392B;font-weight:700':''}">${p.remDays==null?'-':p.remDays}</td><td>${fl.join('')}</td></tr>`;
+  });
+  document.getElementById('tbl').innerHTML=h;
+}
+function sortBy(k){ if(k==='flags') return; if(sortKey===k) sortDir*=-1; else {sortKey=k; sortDir=k==='name'||k==='region'||k==='id'?1:-1;} drawTable(filtered()); }
+
+function drawScatter(F){
+  const rows=F.filter(p=>p.timePct!=null).map(p=>({p,g:(p.prog||0)-p.timePct})).sort((a,b)=>a.g-b.g);
+  const miss=F.filter(p=>p.timePct==null);
+  document.getElementById('scatter').innerHTML=rows.map(({p,g})=>{
+    const cls=g<-0.15?'neg':g<0?'mid':'pos';
+    return `<div class="ci${sel.proj.has(p.name)?' sel':''}" onclick="toggle('proj','${p.name.replace(/'/g,"\\'")}',null)">
+      <div><div class="nm" title="${p.name}">${p.name}</div>
+        <div class="b" title="الإنجاز ${pct(p.prog,0)}"><i style="width:${(p.prog||0)*100}%;background:var(--teal)"></i></div>
+        <div class="b" title="الوقت المنقضي ${pct(p.timePct,0)}"><i style="width:${p.timePct*100}%;background:var(--purple)"></i></div></div>
+      <div class="gp ${cls}">${g>0?'+':''}${Math.round(g*100)}%</div></div>`;}).join('')
+    + (miss.length?`<div class="hint" style="padding:4px 8px">بدون تواريخ: ${miss.map(p=>p.name).join('، ')}</div>`:'');
+}
+
+
+render();
+</script>
+<!--UNIFY--><style>body{font-family:"Segoe UI",Tahoma,"Noto Sans Arabic",Arial,sans-serif!important}
+.kpi{border-radius:14px!important}
+.kpi .t,.kpi>.h{font-size:12.8px!important;font-weight:400!important}
+.kpi .v{font-weight:700!important}
+.row2>*,.row3>*,.bottom>*{min-width:0!important}.tw{overflow:auto!important;max-width:100%}
+.kpi>.h{color:#6B7280!important}.kpi .v{font-size:23px!important}
+.card{border-radius:16px!important}</style><script>(function(){const AR='؀-ۿ';const R1=new RegExp('(^|[^'+AR+'])مليون(?![؀-ۿ])','g'),R2=new RegExp('(^|[^'+AR+'])ريال(?![؀-ۿ])','g');
+const fix=n=>{const t=n.nodeValue;if(!t||(t.indexOf('مليون')<0&&t.indexOf('ريال')<0))return;const v=t.replace(R1,'$1م').replace(R2,'$1ر.س');if(v!==t)n.nodeValue=v};
+const SK={SCRIPT:1,STYLE:1,TEXTAREA:1,INPUT:1};
+const walk=r=>{if(r.nodeType===3){if(!SK[r.parentNode&&r.parentNode.nodeName])fix(r);return}if(r.nodeType!==1||SK[r.nodeName])return;const w=document.createTreeWalker(r,NodeFilter.SHOW_TEXT);let n;while(n=w.nextNode())if(!SK[n.parentNode.nodeName])fix(n)};
+const run=()=>walk(document.body);
+new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData')fix(m.target);else m.addedNodes.forEach(walk)}}).observe(document.documentElement,{childList:true,subtree:true,characterData:true});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();})();</script><!--/UNIFY--><!--INFO-I--><style>.ii{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;border:1px solid currentColor;font:700 10px/1 Georgia,serif;font-style:italic;margin-inline-start:5px;cursor:pointer;opacity:.55;vertical-align:1px;transition:opacity .15s,transform .15s;user-select:none}
+.ii:hover{opacity:1;transform:scale(1.12)}
+.iipop{position:fixed;z-index:9999;width:300px;max-width:calc(100vw - 20px);background:#fff;color:#14213D;border:1px solid #E3E8F0;border-top:3px solid #B8860B;border-radius:12px;box-shadow:0 14px 34px rgba(0,0,0,.22);padding:12px 14px;font-size:12.8px;line-height:1.7;direction:rtl;text-align:right;font-family:inherit}
+.iipop h5{margin:0 0 6px;font-size:13.5px;color:#14213D}
+.iipop .r{margin-top:6px}.iipop .r b{display:block;font-size:11.5px;color:#B8860B}
+.iipop .r span{color:#4B5563}
+.iipop .x{position:absolute;top:6px;left:8px;cursor:pointer;color:#4B5563;font-size:14px}</style><script>(function(){const I={"قيمة المشروع": ["قيمة العقد مع العميل.", "مجموع قيم العقود للمشاريع المختارة.", "تقرير المشاريع"], "المفوتر": ["ما صدرت به فواتير للعميل حتى تاريخه.", "مجموع المفوتر للمشاريع المختارة، ونسبة الفوترة = المفوتر ÷ قيمة المشروع.", "تقرير المشاريع"], "المتبقي (القيمة - المفوتر)": ["الجزء الذي لم يُفوتر بعد من قيم العقود.", "قيمة المشروع − المفوتر.", "تقرير المشاريع"], "الـ Budget": ["الميزانية المعتمدة لتكلفة تنفيذ المشروع.", "مجموع الـ Budget للمشاريع المختارة.", "تقرير المشاريع"], "التكلفة حتى تاريخه": ["ما صُرف فعلياً على تنفيذ المشروع.", "مجموع التكلفة الفعلية، والنسبة = ÷ الـ Budget؛ وتجاوز 100% يعني تجاوز الميزانية.", "تقرير المشاريع"], "المدة المتبقية للانتهاء": ["الأيام المتبقية حتى تاريخ انتهاء المشروع.", "تاريخ الانتهاء − تاريخ اليوم، وعند اختيار أكثر من مشروع: حتى آخر مشروع ينتهي.", "تقرير المشاريع"], "نسبة المتبقي من المشروع إلى المتبقي الإجمالي": ["حصة المشروع التي يُوزَّع على أساسها نصيبه من مصروفات الشركة.", "المتبقي للمشروع ÷ المتبقي لجميع المشاريع.", "تقرير المشاريع"], "عدد السعوديين الذين يتحملهم المشروع": ["نصيب المشروع من السعوديين المسجلين على الشركة.", "إجمالي السعوديين × نسبة المتبقي للمشروع.", "تقرير المشاريع"], "رواتب السعوديين المحملة على المشروع": ["نصيب المشروع من رواتب السعوديين.", "إجمالي رواتب السعوديين × نسبة المتبقي للمشروع.", "تقرير المشاريع"], "عدد موظفي مكتب الرياض المحملين": ["نصيب المشروع من موظفي المكتب الرئيسي.", "عدد موظفي مكتب الرياض × نسبة المتبقي للمشروع.", "تقرير المشاريع"], "رواتب مكتب الرياض المحملة على المشروع": ["نصيب المشروع من رواتب المكتب الرئيسي.", "رواتب مكتب الرياض × نسبة المتبقي للمشروع.", "تقرير المشاريع"], "إجمالي الرواتب المحملة على المشروع": ["جميع الرواتب غير المباشرة المحملة على المشروع.", "رواتب السعوديين المحملة + رواتب مكتب الرياض المحملة.", "تقرير المشاريع"], "حصة المشروع من مخالفات السجل الرئيسي": ["نصيب المشروع من مخالفات السجل التجاري الرئيسي.", "إجمالي المخالفات × نسبة المتبقي للمشروع.", "تقرير المشاريع"], "إجمالي المبالغ المحملة على المشروع": ["جميع المصروفات غير المباشرة المحملة على المشروع.", "إجمالي الرواتب المحملة + حصة المخالفات.", "تقرير المشاريع"], "نسبة الفوترة": ["نسبة ما فُوتر من قيم العقود.", "المفوتر ÷ قيمة المشروع.", "تقرير المشاريع"], "نسبة الإنجاز": ["التقدم الفعلي في تنفيذ المشروع.", "نسبة الإنجاز من التقرير، ولجميع المشاريع متوسط مرجّح بقيمة المشروع.", "تقرير المشاريع"], "الـ Budget إلى قيمة المشروع": ["نسبة الميزانية المعتمدة إلى قيمة العقد، والباقي هو الربح المخطط.", "الـ Budget ÷ قيمة المشروع.", "تقرير المشاريع"], "التكلفة الفعلية إلى الـ Budget": ["نسبة ما صُرف من الميزانية؛ وتجاوز 100% يعني تجاوز الميزانية.", "التكلفة حتى تاريخه ÷ الـ Budget.", "تقرير المشاريع"], "نسبة السعودة": ["نسبة السعوديين في عمالة المشروع.", "إجمالي السعوديين ÷ إجمالي العدد.", "تقرير المشاريع"], "تقييم أداء المشروع (مدير المشروع)": ["تقييم مدير المشروع لأداء المشروع.", "من تقرير المشاريع، ولجميع المشاريع متوسط.", "تقرير المشاريع"], "تقييم العميل لشركة السلومي": ["رضا العميل عن الشركة.", "تقييم العميل من تقرير المشاريع، ولجميع المشاريع متوسط.", "تقرير المشاريع"], "إجمالي رواتب شهر سبتمبر": ["رواتب عمالة المشروع خلال الشهر.", "مجموع الرواتب المسجلة على المشروع.", "تقرير المشاريع"], "إجمالي العدد": ["عدد العمالة في المشروع.", "مجموع العمالة.", "تقرير المشاريع"], "إجمالي السعوديين": ["عدد السعوديين في المشروع.", "مجموع السعوديين.", "تقرير المشاريع"], "الوقت المنقضي": ["نسبة ما انقضى من مدة المشروع.", "(تاريخ اليوم − تاريخ البداية) ÷ (تاريخ الانتهاء − تاريخ البداية).", "تقرير المشاريع"], "المدة المتبقية (يوم)": ["الأيام المتبقية على تاريخ الانتهاء.", "تاريخ الانتهاء − تاريخ اليوم.", "تقرير المشاريع"]};const ks=Object.keys(I);
+const rx=k=>new RegExp('^'+k.replace(/[.+?^${}()|[\]\\]/g,'\\$&').replace(/\*/g,'.*')+'$');const R=ks.map(k=>[rx(k),I[k]]);
+const find=t=>{t=t.replace(/\s+/g,' ').trim();for(const [r,v] of R)if(r.test(t))return v;return null};
+let pop=null;const close=()=>{if(pop){pop.remove();pop=null}};
+function open(el,title,v){close();pop=document.createElement('div');pop.className='iipop';
+ pop.innerHTML=`<span class="x">✕</span><h5>${title}</h5><div class="r"><b>التعريف</b><span>${v[0]}</span></div><div class="r"><b>طريقة الحساب</b><span>${v[1]}</span></div>${v[2]&&v[2]!=='—'?`<div class="r"><b>المصدر</b><span>${v[2]}</span></div>`:''}`;
+ document.body.appendChild(pop);const b=el.getBoundingClientRect(),w=pop.offsetWidth,h=pop.offsetHeight;
+ let x=b.left+b.width/2-w/2,y=b.bottom+8;x=Math.max(10,Math.min(x,innerWidth-w-10));if(y+h>innerHeight-10)y=Math.max(10,b.top-h-8);
+ pop.style.left=x+'px';pop.style.top=y+'px';pop.querySelector('.x').onclick=close}
+const own=e=>[...e.childNodes].filter(n=>n.nodeType===3||(n.nodeType===1&&!['SMALL','SPAN','B','svg'].includes(n.tagName)&&!n.classList.contains('ii'))).map(n=>n.textContent).join('').trim();
+function cands(){const o=[];document.querySelectorAll('.kpi').forEach(k=>{const t=k.querySelector('.t,.h');if(t)o.push([t,t.textContent.trim()])});
+ document.querySelectorAll('.gc .gt,.gcard .gt,.card.gauge>.t,.bt>.h,.tstats .h').forEach(e=>o.push([e,own(e)]));
+ document.querySelectorAll('.mini>div>span').forEach(e=>o.push([e,e.textContent.replace(/\s*•.*$/,'').trim()]));return o}
+function scan(){cands().forEach(([t,raw])=>{if(!t||t.querySelector('.ii'))return;
+ const title=raw.replace(/i$/,'').trim(),v=find(title);if(!v)return;const s=document.createElement('span');s.className='ii';s.textContent='i';s.title='طريقة الحساب';
+ s.addEventListener('click',e=>{e.stopPropagation();e.preventDefault();pop&&pop._for===s?close():(open(s,title,v),pop._for=s)});t.appendChild(s)})}
+document.addEventListener('click',e=>{if(pop&&!pop.contains(e.target))close()});document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+addEventListener('scroll',close,true);
+let q=0;new MutationObserver(()=>{if(!q){q=1;requestAnimationFrame(()=>{q=0;scan()})}}).observe(document.documentElement,{childList:true,subtree:true});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',scan);else scan();})();</script><!--/INFO-I--></body>
+</html>
