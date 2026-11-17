@@ -176,6 +176,15 @@ header.top h1{color:#fff!important}
 .row2 .card{padding-top:12px;padding-bottom:12px}
 .row2 .durbox{padding:6px 10px}
 .row2 .tstats .v{font-size:20px}
+.frow{flex-wrap:wrap}
+.pbtns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pb{font:inherit;font-size:13.5px;font-weight:600;padding:7px 16px;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--tx,#1f2a44);cursor:pointer;transition:all .15s}
+.pb small{font-size:11px;opacity:.7;margin-inline-start:4px}
+.pb:hover{border-color:var(--teal)}
+.pb.on{background:#1E3A5F;border-color:#1E3A5F;color:#fff}
+.fbar .clr{margin-right:0;font-size:13px;padding:7px 14px}
+.row3{grid-template-columns:3fr 1fr !important}
+#scatter{font-size:12.5px}
 </style>
 </head>
 <body>
@@ -188,8 +197,9 @@ header.top h1{color:#fff!important}
   <div class="fbar card">
     <div class="frow">
       <select class="dd" id="selRegion" style="display:none"></select>
-      <label class="flab" for="selProj">المشروع:</label>
-      <select class="dd wide" id="selProj" onchange="onProj(this.value)"></select>
+      <span class="flab">المشروع:</span>
+      <select class="dd wide" id="selProj" style="display:none"></select>
+      <div class="pbtns" id="pBtns"></div>
       <span class="hint" id="fcount"></span>
       <button class="clr" onclick="sel.region.clear();sel.proj.clear();render()">✕ إلغاء الفلاتر</button>
     </div>
@@ -293,6 +303,7 @@ function renderSlicers(){
   const pv=sel.proj.size===1?[...sel.proj][0]:'';
   ps.innerHTML=`<option value="">كل المشاريع (${list.length})</option>`+list.map(p=>`<option value="${p.name.replace(/"/g,'&quot;')}">${p.name}</option>`).join('');
   ps.value=pv; ps.classList.toggle('act',!!pv);
+  document.getElementById('pBtns').innerHTML=`<button class="pb${pv?'':' on'}" onclick="onProj('')">الكل <small>${list.length}</small></button>`+list.map(p=>`<button class="pb${pv===p.name?' on':''}" onclick="onProj(this.dataset.n)" data-n="${p.name.replace(/"/g,'&quot;')}">${p.name}</button>`).join('');
   document.getElementById('fcount').textContent = rv ? `${list.length} مشروع في ${rv}` : '';
 }
 function onRegion(v){ sel.region.clear(); if(v) sel.region.add(v);
